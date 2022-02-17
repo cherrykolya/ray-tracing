@@ -26,7 +26,24 @@ for i in range(5):
 player_pos = Point(400, 400)
 mouse_pos = Point(400, 400)
 R = 800
-
+key = None
+def move(key):
+    if key == "w":
+        player_pos.y -= 1
+    elif key == "s":
+        player_pos.y += 1
+    elif key == "a":
+        player_pos.x -= 1
+    elif key == "d":
+        player_pos.x += 1
+    if player_pos.y >= 800:
+        player_pos.y = 100
+    if player_pos.y <= 5:
+        player_pos.y = 800        
+    if player_pos.x >= 800:
+        player_pos.x = 5
+    if player_pos.x <= 0:
+        player_pos.x = 800   
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -40,15 +57,23 @@ while True:
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                player_pos.y += 10
+                key = "s"
             if event.key == pygame.K_UP or event.key == pygame.K_w:
-                player_pos.y -= 10
+                key = "w"
             if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                player_pos.x -= 10
+                key = "a"
             if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                player_pos.x = player_pos.x + 10 if player_pos.x + 10 <=800 else 800
-    
-
+                key = "d"
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                key = None
+            if event.key == pygame.K_UP or event.key == pygame.K_w:
+                key = None
+            if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                key = None
+            if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                key = None
+    move(key)
     screen.fill((0, 0, 0))
     norm = np.sqrt(mouse_pos.x**2+mouse_pos.y**2)
     normed_x = mouse_pos.x/norm
