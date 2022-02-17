@@ -3,11 +3,14 @@ from structures import Point
 import pygame
 import numpy as np
 import sys
-
+from player import Player
 pygame.init()
 
 screen = pygame.display.set_mode((1600, 800))
-
+################################
+BG = pygame.image.load("fonts//nAqEUnxjqt4.jpg")
+BG = pygame.transform.scale(BG, (800,800))
+################################
 #angles = [i for i in range(321,361,1)]
 
 # create random borders
@@ -23,27 +26,11 @@ for i in range(5):
     y2 = np.random.randint(0,800)
     borders.append(Line(Point(x1, y1), Point(x2, y2)))
 
-player_pos = Point(400, 400)
+player = Player(400,400)
+
 mouse_pos = Point(400, 400)
 R = 800
 key = None
-def move(key):
-    if key == "w":
-        player_pos.y -= 1
-    elif key == "s":
-        player_pos.y += 1
-    elif key == "a":
-        player_pos.x -= 1
-    elif key == "d":
-        player_pos.x += 1
-    if player_pos.y >= 800:
-        player_pos.y = 100
-    if player_pos.y <= 5:
-        player_pos.y = 800        
-    if player_pos.x >= 800:
-        player_pos.x = 5
-    if player_pos.x <= 0:
-        player_pos.x = 800   
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -53,34 +40,37 @@ while True:
         if event.type == 1024:
             mouse_pos.x = pygame.mouse.get_pos()[0] if pygame.mouse.get_pos()[0] < 800 else 800 
             mouse_pos.y = pygame.mouse.get_pos()[1]
-            mouse_pos.x, mouse_pos.y = mouse_pos.x - player_pos.x, mouse_pos.y - player_pos.y
+            mouse_pos.x, mouse_pos.y = mouse_pos.x - player.pos.x, mouse_pos.y - player.pos.y
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                key = "s"
+                player.dir_y = "s"
             if event.key == pygame.K_UP or event.key == pygame.K_w:
-                key = "w"
+                player.dir_y = "w"
             if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                key = "a"
+                player.dir_x = "a"
             if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                key = "d"
+                player.dir_x = "d"
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_DOWN or event.key == pygame.K_s:
-                key = None
+                player.dir_y = None
             if event.key == pygame.K_UP or event.key == pygame.K_w:
-                key = None
+                player.dir_y = None
             if event.key == pygame.K_LEFT or event.key == pygame.K_a:
-                key = None
+                player.dir_x = None
             if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
-                key = None
-    move(key)
-    screen.fill((0, 0, 0))
+                player.dir_x = None
+
+    player.move()
+
+    ##screen.fill((0, 0, 0))
+    screen.blit(BG, BG.get_rect())
     norm = np.sqrt(mouse_pos.x**2+mouse_pos.y**2)
     normed_x = mouse_pos.x/norm
     normed_y = mouse_pos.y/norm
     current_direction = int(np.angle(complex(normed_x, -normed_y), deg = True) +90) 
     print(current_direction)
-    x, y = player_pos.x, player_pos.y
+    x, y = player.pos.x, player.pos.y
     #print(x, y)
     pygame.draw.line(screen, (255,255,255), (800, 0), (800, 800))
     # for 3D visualisation in 40 degrees
