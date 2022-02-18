@@ -17,7 +17,7 @@ WIDTH = 800
 
 # create random borders
 borders = Map(HEIGHT, WIDTH)
-borders.create_random_walls(5)
+borders.generate_maze(10)
 
 #set start position
 player = Player(400,400)
@@ -63,9 +63,10 @@ while True:
     x, y = player.pos.x, player.pos.y
     # for 3D visualisation in "deg" degrees
     deg = 90
+    step = 2
+
     scene = np.zeros(deg)
-    
-    angles = [i if i < 360 else i - 360 for i in range(current_direction-deg//2, current_direction+deg//2,1)]
+    angles = [i if i < 360 else i - 360 for i in range(current_direction-deg//2, current_direction+deg//2,step)]
     
     # draw game map and rays
     for i , angle in enumerate(angles):
@@ -92,20 +93,20 @@ while True:
         distance *= abs(np.cos((angle-current_direction)//2*np.pi/180))
         scene[i] = distance
 
-    width_step = 800/deg
+    width_step = 800/deg*step
     
 
     # draw game 3D scene
     for i , intense in enumerate(scene):
         mult = 0.5
+        scalar = 0.5
         c = 255/intense**mult if 255/intense**mult < 255 else 255 
-        #intense *= abs(np.cos((i-deg)//2*np.pi/180))
 
-        heigth = 800 / intense**mult
+        heigth = 800 /( scalar*(intense**mult))
         heigth_start = (800 - heigth)/2
-        r = pygame.Rect(800+i*width_step, heigth_start, width_step, heigth)
-        
+        r = pygame.Rect(800+i*width_step, heigth_start, width_step, heigth)    
         pygame.draw.rect(screen, (c,c,c), r)
+    
     player.move(current_direction)       
     pygame.display.flip()
 
