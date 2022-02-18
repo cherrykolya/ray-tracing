@@ -7,10 +7,7 @@ from player import Player
 pygame.init()
 
 screen = pygame.display.set_mode((1600, 800))
-################################
-BG = pygame.image.load("fonts//nAqEUnxjqt4.jpg")
-BG = pygame.transform.scale(BG, (800,800))
-################################
+
 #angles = [i for i in range(321,361,1)]
 
 # create random borders
@@ -61,15 +58,14 @@ while True:
             if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                 player.dir_x = None
 
-    player.move()
+    
 
-    ##screen.fill((0, 0, 0))
-    screen.blit(BG, BG.get_rect())
+    screen.fill((0, 0, 0))
     norm = np.sqrt(mouse_pos.x**2+mouse_pos.y**2)
     normed_x = mouse_pos.x/norm
     normed_y = mouse_pos.y/norm
     current_direction = int(np.angle(complex(normed_x, -normed_y), deg = True) +90) 
-    print(current_direction)
+    
     x, y = player.pos.x, player.pos.y
     #print(x, y)
     pygame.draw.line(screen, (255,255,255), (800, 0), (800, 800))
@@ -103,7 +99,7 @@ while True:
         scene[i] = distance
 
     width_step = 800/40
-
+    player.move(current_direction)
     # draw game scene
     for i , intense in enumerate(scene):
         mult = 0.2
