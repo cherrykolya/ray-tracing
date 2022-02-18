@@ -57,26 +57,19 @@ while True:
             if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                 player.dir_x = None
 
-    
-
     screen.fill((0, 0, 0))
-    norm = np.sqrt(mouse_pos.x**2+mouse_pos.y**2)
-    normed_x = mouse_pos.x/norm
-    normed_y = mouse_pos.y/norm
-    current_direction = int(np.angle(complex(normed_x, -normed_y), deg = True) +90) 
-    
-    x, y = player.pos.x, player.pos.y
-    #print(x, y)
-    pygame.draw.line(screen, (255,255,255), (800, 0), (800, 800))
-    # for 3D visualisation in 40 degrees
-    scene = np.zeros(40)
 
-    angles = [i if i < 360 else i - 360 for i in range(current_direction-20,current_direction+20,1)]
+    current_direction = player.current_direction(mouse_pos)
+    x, y = player.pos.x, player.pos.y
+    # for 3D visualisation in "deg" degrees
+    deg = 90
+    scene = np.zeros(deg)
     
-    # draw game map
+    angles = [i if i < 360 else i - 360 for i in range(current_direction-deg//2, current_direction+deg//2,1)]
+    
+    # draw game map and rays
     for i , angle in enumerate(angles):
-        dx = R*np.sin(angle*np.pi/180)
-        dy = R*np.cos(angle*np.pi/180)
+        dx, dy = R*np.sin(angle*np.pi/180), R*np.cos(angle*np.pi/180)
         line = Line(Point(x, y), Point(x+dx, y+dy))
         distance = np.Infinity
         point_to_draw = Point(x,y)
@@ -92,22 +85,28 @@ while True:
                 if r < distance:
                     distance = min(distance, r)
                     point_to_draw = dot
-            #else:
-            #    pygame.draw.line(screen, (255,255,255), (x,y), (x+dx, y+dy))
+        # draw rays on game map
         pygame.draw.line(screen, (255,255,255), (x,y), (point_to_draw.x, point_to_draw.y))
+        
+        # trying to decrease fisheye effects
+        distance *= abs(np.cos((angle-current_direction)//2*np.pi/180))
         scene[i] = distance
 
-    width_step = 800/40
-    player.move(current_direction)
-    # draw game scene
+    width_step = 800/deg
+    
+
+    # draw game 3D scene
     for i , intense in enumerate(scene):
-        mult = 0.2
+        mult = 0.5
+        c = 255/intense**mult if 255/intense**mult < 255 else 255 
+        #intense *= abs(np.cos((i-deg)//2*np.pi/180))
+
         heigth = 800 / intense**mult
         heigth_start = (800 - heigth)/2
         r = pygame.Rect(800+i*width_step, heigth_start, width_step, heigth)
-        c = 255/intense**mult if 255/intense**mult < 255 else 255 
+        
         pygame.draw.rect(screen, (c,c,c), r)
-            
+    player.move(current_direction)       
     pygame.display.flip()
 
 

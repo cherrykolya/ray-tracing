@@ -7,7 +7,7 @@ class Player(pygame.sprite.Sprite):
         self.pos = Point(x,y)
         self.dir_x = None
         self.dir_y = None
-        self.speed = 1
+        self.speed = 0.5
 
     def move(self, current_direction):
         """
@@ -36,3 +36,10 @@ class Player(pygame.sprite.Sprite):
             self.pos.y = 795
         if self.pos.y >= 800:
             self.pos.y = 5
+    
+    def current_direction(self, mouse_pos: Point):
+       
+        norm = np.sqrt(mouse_pos.x**2 + mouse_pos.y**2)
+        normed_x = mouse_pos.x/norm
+        normed_y = mouse_pos.y/norm
+        return int(np.angle(complex(normed_x, -normed_y), deg = True) +90) 
