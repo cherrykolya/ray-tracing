@@ -1,38 +1,37 @@
 from line import Line
 from structures import Point
+from maps import Map
+from player import Player
 import pygame
 import numpy as np
 import sys
-from player import Player
-pygame.init()
 
+
+
+pygame.init()
 screen = pygame.display.set_mode((1600, 800))
 
-#angles = [i for i in range(321,361,1)]
+# set map size
+HEIGHT = 800
+WIDTH = 800
 
 # create random borders
-borders = []
-borders.append(Line(Point(0, 0), Point(800, 0)))
-borders.append(Line(Point(800, 0), Point(800, 800)))
-borders.append(Line(Point(800, 800), Point(0, 800)))
-borders.append(Line(Point(0, 800), Point(0, 0)))
-for i in range(5):
-    x1 = np.random.randint(0,800)
-    x2 = np.random.randint(0,800)
-    y1 = np.random.randint(0,800)
-    y2 = np.random.randint(0,800)
-    borders.append(Line(Point(x1, y1), Point(x2, y2)))
+borders = Map(HEIGHT, WIDTH)
+borders.create_random_walls(5)
 
+#set start position
 player = Player(400,400)
-
 mouse_pos = Point(400, 400)
+
 R = 800
 key = None
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+
         # get mouse move event
         if event.type == 1024:
             mouse_pos.x = pygame.mouse.get_pos()[0] if pygame.mouse.get_pos()[0] < 800 else 800 
@@ -82,7 +81,7 @@ while True:
         distance = np.Infinity
         point_to_draw = Point(x,y)
 
-        for border in borders:
+        for border in borders.borders:
             #  draw borders
             pygame.draw.line(screen, (255,255,255), (border.start.x, border.start.y), (border.end.x, border.end.y))
             
@@ -110,3 +109,5 @@ while True:
         pygame.draw.rect(screen, (c,c,c), r)
             
     pygame.display.flip()
+
+
