@@ -6,7 +6,7 @@ ____
 
 ## Descripition
 
-При запуске программы, игрок попадает на игровое ![поле](https://github.com/jon/coolproject/raw/master/image/image.png)
+При запуске программы, игрок попадает на игровое ![поле](https://github.com/cherrykolya/ray-tracing/tree/main/screenshots/game_window.png)
 
 В левой части располагается - карта
 В правой - 3D визуализация вида игрока
